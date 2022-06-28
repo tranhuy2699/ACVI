@@ -1,1 +1,64 @@
 // Here you can add other styles
+.background-menu {
+    background: white;
+    .justify-content {
+        justify-content: space-between;
+        padding-left: 24px;
+        padding-right: 10px;
+        .titleProject {
+            font-weight: 700;
+            color: #D46B08;
+            padding: 0 15px;
+            text-align: center;
+        }
+    }
+}
+
+.ant-form-item-label label {
+    &:after {
+        content: none !important;
+    }
+}
+
+.two-rows-label .ant-form-item-label {
+    padding: 4px 0 !important;
+    label {
+        white-space: normal;
+        display: inline-block;
+        line-height: 17px;
+        &.ant-form-item-required:before {
+            position: absolute;
+            left: -7px;
+        }
+    }
+}
+
+.btn-search {
+    background: #5048E5 !important;
+    /* shadow-base */
+    box-shadow: 0px 1px 2px rgba(31, 41, 55, 0.08) !important;
+    border-radius: 4px !important;
+    span {
+        color: #FFFFFF;
+    }
+}
+
+.ant-picker {
+    width: 100%;
+}
+
+.btn-creatd {
+    background: #FA8C16;
+    color: #FFFFFF;
+    font-weight: 700;
+    font-size: 16px;
+    padding: 0 8px;
+}
+
+.btn-excel {
+    background: #B1B0B8;
+    font-weight: 400;
+    font-size: 14px;
+    color: #FFFFFF;
+    padding: 0 8px;
+}
