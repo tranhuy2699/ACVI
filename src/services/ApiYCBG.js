@@ -2,7 +2,8 @@ const searchYCBG =
     'https://avsm.avic.vn/avic-business/product-price/searchRequest?page=0&properties=modifiedDate&size=10&sortBy=ASC'
 const getAllGroupProduct =
     'https://avsm.avic.vn/avic-business/category/product/search?page=0&properties=modifiedDate&size=10&sortBy=DESC'
-
+const getAllProvince = 'https://avsm.avic.vn/avic-business/place'
+const uploadFile = 'https://avsm.avic.vn/avic-business/uploadFile'
 const ENDPOINT_REPOS = '/repos'
 
-export { searchYCBG, getAllGroupProduct, ENDPOINT_REPOS }
+export { searchYCBG, getAllGroupProduct, getAllProvince, uploadFile, ENDPOINT_REPOS }

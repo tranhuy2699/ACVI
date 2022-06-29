@@ -1,5 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { BrowserRouter as Router, Route, Link, useNavigate } from 'react-router-dom'
+import axios from "axios";
+import moment from 'moment'
 import {
     CCard,
     CCardBody,
@@ -20,9 +22,11 @@ import {
     Dropdown,
     Menu,
     Space,
-    Popconfirm
+    Popconfirm,
+    Upload,
 } from 'antd'
 import { SettingOutlined, UserOutlined } from '@ant-design/icons'
+import * as constants from "../../services/ApiYCBG.js";
 
 import { DocsCallout, DocsExample } from 'src/components'
 const EditableContext = React.createContext(null);
@@ -104,13 +108,57 @@ const EditableCell = ({
 
     return <td {...restProps}>{childNode}</td>;
 };
-const Tables = () => {
+
+
+const CreateYCBG = () => {
     const navigate = useNavigate()
     const [form] = Form.useForm()
     const [visible, setVisible] = useState(false)
     const { Option } = Select;
-    const handleCreated = () => {
-        console.log(dataSource)
+    const [ListProvince, setListProvince] = useState([]);
+    const [ListDistrict, setListListDistrict] = useState([]);
+    const [defaultFileList, setDefaultFileList] = useState([]);
+    const [progress, setProgress] = useState(0);
+    useEffect(() => {
+        getAllProvince();
+    }, []);
+    const getAllProvince = () => {
+        axios.get(constants.getAllProvince)
+            .then(result => {
+                let array = [];
+                console.log(result.data.data.provinces);
+                if (result.data.data.provinces) {
+                    result.data.data.provinces.forEach((item, i) => {
+                        array.push(<Option value={item.provinceId}>{item.provinceName}</Option>);
+                    });
+                }
+                setListProvince(array)
+            })
+            .catch(error =>
+                console.log('loi api')
+            );
+    }
+    const getDistrictByProv = (id) => {
+        axios.get(constants.getAllProvince + `?provinceId=${id}`)
+            .then(result => {
+                let array = [];
+                console.log(result.data.data.districts);
+                if (result.data.data.districts) {
+                    result.data.data.districts.forEach((item, i) => {
+                        array.push(<Option value={item.districtId}>{item.districtName}</Option>);
+                    });
+                }
+                setListListDistrict(array)
+            })
+            .catch(error =>
+                console.log('loi api')
+            );
+    }
+    const handleCreated = (form) => {
+        form.productQuotes = [];
+        form.productQuotes = dataSource;
+        form.dateReponse = moment(form.dateReponse).format('YYYY-MM-DD')
+        console.log(form)
     }
     const handleMenuClick = (e) => {
         console.log('click icon', e)
@@ -141,15 +189,17 @@ const Tables = () => {
     const [dataSource, setDataSource] = useState([
         {
             key: '0',
-            name: 'Edward King 0',
-            age: '32',
-            address: 'London, Park Lane no. 0',
+            productNameClient: 'Edward King 0',
+            amount: '32',
+            unit: 'cái',
+            describes: 'London, Park Lane no. 0',
         },
         {
             key: '1',
-            name: 'Edward King 1',
-            age: '32',
-            address: 'London, Park Lane no. 1',
+            productNameClient: 'Edward King 0',
+            amount: '32',
+            unit: 'cái',
+            describes: 'London, Park Lane no. 0',
         },
     ]);
     const defaultColumns = [
@@ -159,34 +209,64 @@ const Tables = () => {
         },
         {
             title: 'Tên hàng hóa',
-            dataIndex: 'name',
+            dataIndex: 'productNameClient',
             width: '200',
             editable: true,
         },
         {
             title: 'Số Lượng',
-            dataIndex: 'age',
+            dataIndex: 'amount',
             editable: true,
         },
         {
             title: 'Đơn vị hàng hóa',
-            dataIndex: 'address',
+            dataIndex: 'unit',
             editable: true,
         },
         {
             title: 'Mô tả(từ KH)',
-            dataIndex: 'address',
+            dataIndex: 'describes',
             editable: true,
         },
         {
             title: 'Hình ảnh(từ KH)',
-            dataIndex: 'operation',
+            dataIndex: 'attachs',
             render: (_, record) =>
-                dataSource.length >= 1 ? (
-                    <Button>Tải ảnh</Button>
-                ) : null,
+                <Upload name="file" customRequest={uploadImage} onChange={handleOnChange}>
+                    <Button type='primary' >Tải ảnh</Button>
+                </Upload>
+
         },
     ];
+    const uploadImage = async options => {
+        const { onSuccess, onError, file, onProgress } = options;
+        const fmData = new FormData();
+        const config = {
+            headers: { "content-type": "multipart/form-data" },
+            onUploadProgress: event => {
+                const percent = Math.floor((event.loaded / event.total) * 100);
+                setProgress(percent);
+                if (percent === 100) {
+                    setTimeout(() => setProgress(0), 1000);
+                }
+                onProgress({ percent: (event.loaded / event.total) * 100 });
+            }
+        };
+        fmData.append("file", file);
+        axios.post(constants.uploadFile, fmData)
+            .then(result => {
+                console.log(result)
+                onSuccess("Ok");
+                console.log("server res: ", result);
+            }).catch(error => {
+                onError({ error });
+                console.log('loi api')
+            }
+            );
+    };
+    const handleOnChange = ({ file, fileList, event }) => {
+        setDefaultFileList(fileList);
+    };
     const columns = defaultColumns.map((col) => {
         if (!col.editable) {
             return col;
@@ -204,32 +284,26 @@ const Tables = () => {
         };
     });
     const { RangePicker } = DatePicker
-
-    const onFinish = (values) => {
-        console.log('Received values of form: ', values)
-    }
-    const onChange = (date, dateString) => {
-        console.log(date, dateString);
-    };
     return (
         <CRow>
-            {' '}
-            {/* <CCol xs={12}>
+            <Form
+                form={form}
+                name="advanced_search"
+                className="ant-advanced-search-form"
+                onFinish={handleCreated}
+                labelAlign="left"
+                labelCol={{ span: 6 }}
+                wrapperCol={{ span: 12 }}
+            >
+                {' '}
+                {/* <CCol xs={12}>
                             <DocsCallout name="Table" href="components/table" />
                         </CCol> */}{' '}
-            <CCol xs={12}>
-                <CCard className="mb-4">
-                    <CCardBody>
-                        <p className="text-medium-emphasis">Thông tin chung</p>
-                        <Form
-                            form={form}
-                            name="advanced_search"
-                            className="ant-advanced-search-form"
-                            onFinish={onFinish}
-                            labelAlign="left"
-                            labelCol={{ span: 6 }}
-                            wrapperCol={{ span: 12 }}
-                        >
+                <CCol xs={12}>
+                    <CCard className="mb-4">
+                        <CCardBody>
+                            <p className="text-medium-emphasis">Thông tin chung</p>
+
                             <Row gutter={24}>
                                 <Col span={12}>
                                     <Form.Item name="requestCode" label="Mẫ YCBG:*">
@@ -237,115 +311,123 @@ const Tables = () => {
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>
-                                    <Form.Item name="productGroupId" label="Ngày mong muốn báo giá" className={'two-rows-label'}>
-                                        <DatePicker onChange={onChange} />
+                                    <Form.Item name="dateReponse" label="Ngày mong muốn báo giá" className={'two-rows-label'}>
+                                        <DatePicker />
                                     </Form.Item>
                                 </Col>
                             </Row>
-                        </Form>
-                    </CCardBody>{' '}
-                </CCard>{' '}
-            </CCol>{' '}
+                        </CCardBody>{' '}
+                    </CCard>{' '}
+                </CCol>{' '}
 
-            <CCol xs={12}>
-                <CCard className="mb-4">
-                    <CCardBody>
-                        <p className="text-medium-emphasis">Thông tin coong ty YCBG</p>
-                        <Form
-                            form={form}
-                            name="advanced_search"
-                            className="ant-advanced-search-form"
-                            onFinish={onFinish}
-                            labelAlign="left"
-                            labelCol={{ span: 6 }}
-                            wrapperCol={{ span: 12 }}
-                        >
+                <CCol xs={12}>
+                    <CCard className="mb-4">
+                        <CCardBody>
+                            <p className="text-medium-emphasis">Thông tin coong ty YCBG</p>
                             <Row gutter={24}>
                                 <Col span={12}>
-                                    <Form.Item name="requestCode" label="Tên công ty: ">
+                                    <Form.Item name="companyName" label="Tên công ty: ">
                                         <Input placeholder="Nhập tên công ty" showCount maxLength={100} />
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>
-                                    <Form.Item name="requestCode" label="Nơi nhận hàng: ">
+                                    <Form.Item name="recipients" label="Nơi nhận hàng: ">
                                         <Input placeholder="Nhập địa chỉ nhận hàng" showCount maxLength={200} />
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>
-                                    <Form.Item name="requestCode" label="Địa chỉ công ty: ">
-                                        <Input placeholder="Nhập mã YCBG" />
+                                    <Form.Item label="Địa chỉ công ty: ">
+                                        <Form.Item
+                                            name="provinceId"
+                                            style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}
+                                        >
+                                            <Select
+                                                placeholder="Tỉnh/Thành"
+                                                onChange={getDistrictByProv}>
+                                                {ListProvince}
+                                            </Select>
+                                        </Form.Item>
+                                        <Form.Item
+                                            name="districtId"
+                                            style={{ display: 'inline-block', width: 'calc(50% - 8px)', marginLeft: '16px' }}
+                                        >
+                                            <Select
+                                                placeholder="Quận/Huyện"
+                                            >
+                                                {ListDistrict}
+                                            </Select>
+                                        </Form.Item>
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>
-                                    <Form.Item name="requestCode" label="Người nhận hàng: *">
+                                    <Form.Item name="receiver" label="Người nhận hàng: *">
                                         <Input placeholder="Nhập tên người nhận hàng" showCount maxLength={100} />
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>
-                                    <Form.Item name="requestCode" label="Địa chỉ chi tiết: ">
-                                        <Input placeholder="Nhập số nhà, ngõ, xóm, phường/xã" showCount maxLength={200} />
+                                    <Form.Item name="address" label="Địa chỉ chi tiết: ">
+                                        <Input placeholder="Nhập địa chỉ chi tiết" showCount maxLength={200} />
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>
-                                    <Form.Item name="requestCode" label="Số điện thoại: *">
+                                    <Form.Item name="phoneNumber" label="Số điện thoại: *">
                                         <Input placeholder="Nhập SĐT người nhận hàng" showCount maxLength={20} />
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>
-                                    <Form.Item name="requestCode" label="">
+                                    <Form.Item label="">
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>
-                                    <Form.Item name="productGroupId" label="Email: *">
+                                    <Form.Item name="email" label="Email: *">
                                         <Input placeholder="Nhập Email người nhận hàng" showCount maxLength={50} />
                                     </Form.Item>
                                 </Col>
                             </Row>
-                        </Form>
-                    </CCardBody>{' '}
-                </CCard>{' '}
-            </CCol>{' '}
-            <CCol xs={12}>
-                <CCard>
-                    <CCardBody>
-                        <CRow gutter={24}>
-                            <Col span={12} style={{ textAlign: 'left' }}>
-                                <p>Thông tin hàng hóa</p>
-                                <p>500 YCBG</p>
-                            </Col>
-                            <Col span={12} style={{ textAlign: 'right' }}>
-                                <Button className="btn-excel" htmlType="submit" style={{ background: '#FA8C16', color: '#FFFFFF' }}>
-                                    Import
-                                </Button>
-                            </Col>
-                        </CRow>
+                        </CCardBody>{' '}
+                    </CCard>{' '}
+                </CCol>{' '}
+                <CCol xs={12}>
+                    <CCard>
+                        <CCardBody>
+                            <CRow gutter={24}>
+                                <Col span={12} style={{ textAlign: 'left' }}>
+                                    <p>Thông tin hàng hóa</p>
+                                    <p>500 YCBG</p>
+                                </Col>
+                                <Col span={12} style={{ textAlign: 'right' }}>
+                                    <Button className="btn-excel" htmlType="submit" style={{ background: '#FA8C16', color: '#FFFFFF' }}>
+                                        Import
+                                    </Button>
+                                </Col>
+                            </CRow>
 
-                        <CRow gutter={24}>
-                            <Table
-                                components={components}
-                                rowClassName={() => 'editable-row'}
-                                bordered
-                                dataSource={dataSource}
-                                columns={columns}
-                            />
-                        </CRow>
-                    </CCardBody>
-                </CCard>
-            </CCol>
+                            <CRow gutter={24}>
+                                <Table
+                                    components={components}
+                                    rowClassName={() => 'editable-row'}
+                                    bordered
+                                    dataSource={dataSource}
+                                    columns={columns}
+                                />
+                            </CRow>
+                        </CCardBody>
+                    </CCard>
+                </CCol>
 
-            <CCol xs={12} style={{ textAlign: 'center', padding: '20px' }}>
-                <Button style={{ margin: '0 8px', }} className='btn-creatd' onClick={() => { handleMenuClick({ key: 1 }) }} >
-                    Hủy bỏ
-                </Button>
+                <CCol xs={12} style={{ textAlign: 'center', padding: '20px' }}>
+                    <Button style={{ margin: '0 8px', }} className='btn-creatd' onClick={() => { handleMenuClick({ key: 1 }) }} >
+                        Hủy bỏ
+                    </Button>
 
-                <Button type='primary' className='btn-excel' onClick={() => { handleCreated() }}>
-                    Lưu
-                </Button>
-            </CCol>
+                    <Button type='primary' htmlType="submit" className='btn-excel'>
+                        Lưu
+                    </Button>
+                </CCol>
 
-
+            </Form>
         </CRow>
     )
 }
 
-export default Tables
+export default CreateYCBG

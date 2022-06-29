@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { BrowserRouter as Router, Route, Link, useNavigate } from 'react-router-dom'
 import axios from "axios";
+import moment from "moment"
 import * as constants from "../../services/ApiYCBG.js";
 import {
     CCard,
@@ -19,7 +20,7 @@ import {
 import { useState } from 'react';
 import locale from 'antd/es/date-picker/locale/vi_VN';
 import { Button, Col, Form, Input, Row, Select, DatePicker, Table, Dropdown, Menu, Space } from 'antd';
-import { SettingOutlined, UserOutlined } from '@ant-design/icons';
+import { SettingOutlined, UserOutlined, EyeOutlined, EditOutlined, DeleteFilled } from '@ant-design/icons';
 
 import { DocsCallout, DocsExample } from 'src/components'
 const Tables = () => {
@@ -27,6 +28,8 @@ const Tables = () => {
     const [form] = Form.useForm();
     const [visible, setVisible] = useState(false);
     const { Option } = Select;
+    const [page, setPage] = useState(1);
+    const [data, setData] = useState([]);
     const [listGroupProduct, setlistGroupProduct] = useState([]);
     useEffect(() => {
         console.log(form)
@@ -38,10 +41,9 @@ const Tables = () => {
         axios.post(constants.searchYCBG, query)
             .then(result => {
                 console.log(result);
-                //   this.setState({
-                //     repos: result.data,
-                //     isLoading: false
-                //   });
+                if (result.data.data.content) {
+                    setData(result.data.data.content)
+                }
             })
             .catch(error =>
                 console.log('loi api')
@@ -77,6 +79,9 @@ const Tables = () => {
         {
             title: 'STT',
             dataIndex: 'key',
+            render: (value, item, index) => (
+                <span>{(page - 1) * 10 + index + 1}</span>
+            )
         },
         {
             title: 'Xử lý',
@@ -96,16 +101,20 @@ const Tables = () => {
             dataIndex: 'address',
         },
         {
-            title: 'Ngày  mong muốn báo giá',
-            dataIndex: 'address',
+            title: 'Ngày mong muốn báo giá',
+            dataIndex: 'dateReponse',
+            render: (dateReponse) =>
+                <span>{(moment(new Date(dateReponse)).format("DD/MM/YYYY"))}</span>
         },
         {
             title: 'Ngày báo giá',
-            dataIndex: 'address',
+            dataIndex: 'modifiedDate',
+            render: (modifiedDate) =>
+                <span>{(moment(new Date(modifiedDate)).format("DD/MM/YYYY"))}</span>
         },
         {
             title: 'Mã YCBG',
-            dataIndex: 'address',
+            dataIndex: 'requestCode',
         },
         {
             title: 'Nhóm hàng hóa',
@@ -113,41 +122,41 @@ const Tables = () => {
         },
         {
             title: 'Tên hàng hóa',
-            dataIndex: 'address',
+            dataIndex: 'productNames',
         },
         {
             title: 'Tên công ty',
-            dataIndex: 'address',
+            dataIndex: 'companyName',
         },
         {
             title: 'Người nhận',
-            dataIndex: 'address',
+            dataIndex: 'receiver',
         },
         {
             title: 'Số điện thoại',
-            dataIndex: 'address',
+            dataIndex: 'phoneNumber',
         },
     ];
-    const data = [
-        {
-            key: '1',
-            name: 'Chưa gửi TP duyệt ycbg',
-            age: 32,
-            address: 'Đồ dùng nhà bếp',
-        },
-        {
-            key: '2',
-            name: '01/06/2022',
-            age: 42,
-            address: 'London No. 1 Lake Park',
-        },
-        {
-            key: '3',
-            name: 'Joe Black',
-            age: 32,
-            address: 'Sidney No. 1 Lake Park',
-        },
-    ];
+    // const data = [
+    //     {
+    //         key: '1',
+    //         name: 'Chưa gửi TP duyệt ycbg',
+    //         age: 32,
+    //         address: 'Đồ dùng nhà bếp',
+    //     },
+    //     {
+    //         key: '2',
+    //         name: '01/06/2022',
+    //         age: 42,
+    //         address: 'London No. 1 Lake Park',
+    //     },
+    //     {
+    //         key: '3',
+    //         name: 'Joe Black',
+    //         age: 32,
+    //         address: 'Sidney No. 1 Lake Park',
+    //     },
+    // ];
     const menu = (
         <Menu
             onClick={handleMenuClick}
@@ -155,14 +164,17 @@ const Tables = () => {
                 {
                     label: 'Xem chi tiết',
                     key: '1',
+                    icon: <EyeOutlined />,
                 },
                 {
                     label: 'Chỉnh sửa',
                     key: '2',
+                    icon: <EditOutlined />,
                 },
                 {
                     label: 'Xóa',
                     key: '3',
+                    icon: <DeleteFilled />,
                 },
             ]}
         />
@@ -190,8 +202,8 @@ const Tables = () => {
                             form={form}
                             name="advanced_search"
                             className="ant-advanced-search-form"
-                            onFinish={onClickSearch}
                             labelAlign="left"
+                            onFinish={onClickSearch}
                             labelCol={{ span: 6 }} wrapperCol={{ span: 12 }}
                         >
                             <Row gutter={24}>
