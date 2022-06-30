@@ -19,12 +19,7 @@ import {
     Select,
     DatePicker,
     Table,
-    Dropdown,
-    Menu,
-    Space,
-    Popconfirm,
     Upload,
-    message
 } from 'antd'
 import { SettingOutlined, UserOutlined } from '@ant-design/icons'
 import * as constants from "../../services/ApiYCBG.js";
@@ -111,7 +106,7 @@ const EditableCell = ({
 };
 
 
-const CreateYCBG = () => {
+const OrderCreate = () => {
     const navigate = useNavigate()
     const [form] = Form.useForm()
     const [visible, setVisible] = useState(false)
@@ -160,15 +155,17 @@ const CreateYCBG = () => {
     const handleCreated = (form) => {
         form.productQuotes = [];
         form.productQuotes = dataSource.map(item => {
-            if (!item.attachs) item.attachs = ['1.jpg']
+            if (!item.attachs) item.attachs = []
             return item
         });
         form.dateReponse = moment(form.dateReponse).format('YYYY-MM-DD')
         console.log(form)
         axios.post(constants.CreatedYCBG, form)
             .then(result => {
-                message.success('Thêm mới thành công', 10);
-                navigate('/list-quotation');
+                return (
+                    <Link to={`/list-quotation`}>
+                    </Link>
+                )
             })
             .catch(error =>
                 console.log('loi api')
@@ -252,14 +249,6 @@ const CreateYCBG = () => {
             dataIndex: 'describes',
             editable: true,
         },
-        {
-            title: 'Hình ảnh(từ KH)',
-            dataIndex: 'attachs',
-            render: (value, item, index) =>
-                <Upload name="file" customRequest={uploadImage} onChange={handleOnChange}>
-                    <Button type='primary' onClick={setIndexRow(index)}>Tải ảnh</Button>
-                </Upload>
-        },
     ];
     const setIndexRow = (index) => {
         let rowIndex = index
@@ -321,7 +310,7 @@ const CreateYCBG = () => {
     const { RangePicker } = DatePicker
     return (
         <CRow>
-            <p style={{ color: '#096DD9', fontSize: '18px', fontWeight: 600 }}>Tạo yêu cầu báo giá</p>
+            <p style={{ color: '#096DD9', fontSize: '18px', fontWeight: 600 }}>Tạo mới đơn hàng</p>
             <Form
                 form={form}
                 name="advanced_search"
@@ -338,7 +327,7 @@ const CreateYCBG = () => {
                 <CCol xs={12}>
                     <CCard className="mb-4">
                         <CCardBody>
-                            <p className="text-medium-emphasis">Thông tin chung</p>
+                            <p className="text-medium-emphasis titleCart" >Thông tin chung</p>
 
                             <Row gutter={24}>
                                 <Col span={12}>
@@ -466,4 +455,4 @@ const CreateYCBG = () => {
     )
 }
 
-export default CreateYCBG
+export default OrderCreate

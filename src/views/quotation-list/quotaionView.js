@@ -22,6 +22,7 @@ import {
     Space,
     Popconfirm
 } from 'antd'
+import ApproveModal from './approveModal'
 import { SettingOutlined, UserOutlined } from '@ant-design/icons'
 
 import { DocsCallout, DocsExample } from 'src/components'
@@ -108,7 +109,12 @@ const Tables = () => {
     const navigate = useNavigate()
     const [form] = Form.useForm()
     const [visible, setVisible] = useState(false)
-    const { Option } = Select
+    const [notSignVisible, setNotSignVisible] = useState(false);
+    const [notSignId, setNotSignId] = useState(0);
+    const { Option } = Select;
+    const triggerSearch = () => {
+        console.log('click modal')
+    }
     const handleMenuClick = (e) => {
         console.log('click icon', e)
         if (e.key == 1) {
@@ -117,6 +123,9 @@ const Tables = () => {
     }
     const handleVisibleChange = (flag) => {
         setVisible(flag)
+    }
+    const toggleNotSign = (id) => {
+        setNotSignVisible(!notSignVisible);
     }
     const components = {
         body: {
@@ -197,7 +206,9 @@ const Tables = () => {
         };
     });
     const { RangePicker } = DatePicker
-
+    const handleApprove = () => {
+        setNotSignVisible(true)
+    }
     const onFinish = (values) => {
         console.log('Received values of form: ', values)
     }
@@ -337,15 +348,27 @@ const Tables = () => {
             </CCol>
 
             <CCol xs={12} style={{ textAlign: 'center', padding: '20px' }}>
-                <Button style={{ margin: '0 8px', }} className='btn-creatd' onClick={() => { handleMenuClick({ key: 1 }) }} >
+                <Button style={{ margin: '0 4px', }} onClick={() => { handleMenuClick({ key: 1 }) }} >
                     Quay lại
                 </Button>
-
-                <Button type='danger' className='btn-excel' htmlType="submit">
-                    Cancel
+                <Button style={{ margin: '0 4px', background: '#CF1322', color: '#FFFFFF' }} onClick={() => { handleMenuClick({ key: 1 }) }} >
+                    Xóa
+                </Button>
+                <Button style={{ margin: '0 4px', background: '#096DD9', color: '#FFFFFF' }} onClick={() => { handleMenuClick({ key: 1 }) }} >
+                    Chỉnh sửa
+                </Button>
+                <Button style={{ margin: '0 4px', background: '#FA8C16', color: '#FFFFFF' }} className='btn-creatd' onClick={() => { handleApprove() }} >
+                    Gửi phê duyệt
                 </Button>
             </CCol>
-
+            {notSignVisible ?
+                <ApproveModal
+                    openPopup={notSignVisible}
+                    toggleModal={toggleNotSign}
+                    notSignId={notSignId}
+                    modalAction={() => triggerSearch()}
+                /> : <></>
+            }
 
         </CRow>
     )

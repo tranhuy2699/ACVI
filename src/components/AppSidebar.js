@@ -46,26 +46,19 @@ const items = [
     getItem('Danh sách báo giá KH', '6'),
     getItem('Phê duyệt báo giá KH', '7'),
   ]),
-  // getItem('Quản lý Đơn hàng mua', 'sub4', <AppleOutlined />, [
-  //   getItem('Danh sách Đơn hàng mua', '8'),
-  //   getItem('Phê duyệt Đơn hàng mua', '9'),
-  // ]),
-  // getItem('Quản lý Mua hàng hóa', '10', <AppleOutlined />),
-  // getItem('Quản lý danh mục', 'sub5', <AppleOutlined />, [
-  //   getItem('Danh mục Nhóm hàng hóa', '11'),
-  //   getItem('Danh mục Hàng hóa', '12'),
-  //   getItem('Danh mục Nhà cung cấp', '13'),
-  // ]),
-  // getItem('Quản trị hệ thống', 'sub6', <AppleOutlined />, [
-  //   // getItem('Quản trị hệ thống', '14'),
-  // ]),
-  // getItem(
-  //   <a href="https://ant.design" target="_blank" rel="noopener noreferrer">
-  //     Ant Design
-  //   </a>,
-  //   'link',
-  //   <AppleOutlined />,
-  // ),
+  getItem('Quản lý Đơn hàng mua', 'sub4', <AppleOutlined />, [
+    getItem('Danh sách Đơn hàng mua', 'order-list'),
+    getItem('Phê duyệt Đơn hàng mua', '9'),
+  ]),
+  getItem('Quản lý Mua hàng hóa', '10', <AppleOutlined />),
+  getItem('Quản lý danh mục', 'sub5', <AppleOutlined />, [
+    getItem('Danh mục Nhóm hàng hóa', '11'),
+    getItem('Danh mục Hàng hóa', '12'),
+    getItem('Danh mục Nhà cung cấp', '13'),
+  ]),
+  getItem('Quản trị hệ thống', 'sub6', <AppleOutlined />, [
+    // getItem('Quản trị hệ thống', '14'),
+  ]),
 ]
 const AppSidebar = () => {
   const dispatch = useDispatch()

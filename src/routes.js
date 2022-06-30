@@ -8,6 +8,9 @@ const Typography = React.lazy(() => import('./views/theme/typography/Typography'
 const Quotationlist = React.lazy(() => import('./views/quotation-list/quotation-list'))
 const QuotationlistEdit = React.lazy(() => import('./views/quotation-list/quotaionEdit'))
 const QuotationlistView = React.lazy(() => import('./views/quotation-list/quotaionView'))
+//order
+const OrderList = React.lazy(() => import('./views/order/OrderList'))
+const OrderCreate = React.lazy(() => import('./views/order/OrderCreate'))
 // Base
 const Accordion = React.lazy(() => import('./views/base/accordion/Accordion'))
 const Breadcrumbs = React.lazy(() => import('./views/base/breadcrumbs/Breadcrumbs'))
@@ -57,9 +60,13 @@ const Widgets = React.lazy(() => import('./views/widgets/Widgets'))
 const routes = [
     { path: '/', exact: true, name: 'Home' },
     //project
-    { path: '/list-quotation', name: 'Quotation', element: Quotationlist },
-    { path: '/list-quotation/edit', name: 'QuotationEdit', element: QuotationlistEdit },
-    { path: '/list-quotation/view', name: 'QuotationView', element: QuotationlistView },
+    { path: '/list-quotation', name: 'Danh sách Yêu cầu báo giá', element: Quotationlist },
+    { path: '/list-quotation/create', name: 'Tạo yêu cầu báo giá', element: QuotationlistEdit },
+    { path: '/list-quotation/:id/edit', name: 'Chỉnh sửa Yêu cầu báo giá', element: QuotationlistEdit },
+    { path: '/list-quotation/:id/view', name: 'Chi tiết Yêu cầu báo giá', element: QuotationlistView },
+    //order
+    { path: '/order-list', name: 'Danh sách đơn hàng mua', element: OrderList },
+    { path: '/order-create', name: 'Tạo mới đơn hàng mua', element: OrderCreate },
     //end
     { path: '/dashboard', name: 'Dashboard', element: Dashboard },
     { path: '/theme', name: 'Theme', element: Colors, exact: true },

@@ -9,24 +9,16 @@ import * as constants from "../../services/ApiYCBG.js";
 import {
     CCard,
     CCardBody,
-    CCardHeader,
     CCol,
     CRow,
-    CTable,
-    CTableBody,
-    CTableCaption,
-    CTableDataCell,
-    CTableHead,
-    CTableHeaderCell,
-    CTableRow,
 } from '@coreui/react'
 import { useState } from 'react';
 import locale from 'antd/es/date-picker/locale/vi_VN';
-import { Button, Col, Form, Input, Row, Select, DatePicker, Table, Dropdown, Menu, Space } from 'antd';
-import { SettingOutlined, UserOutlined, EyeOutlined, EditOutlined, DeleteFilled } from '@ant-design/icons';
+import { Button, Col, Form, Input, Row, Select, DatePicker, Table, Dropdown, Menu } from 'antd';
+import { SettingOutlined } from '@ant-design/icons';
 
 import { DocsCallout, DocsExample } from 'src/components'
-const Tables = () => {
+const OrderList = () => {
     const navigate = useNavigate()
     const [form] = Form.useForm();
     const [visible, setVisible] = useState(false);
@@ -69,10 +61,7 @@ const Tables = () => {
     const handleMenuClick = (e) => {
         console.log('click icon', e)
         if (!e) {
-            navigate('/list-quotation/create');
-        }
-        if (e.key == 1) {
-            navigate('/list-quotation/view');
+            navigate('/order-list/create');
         }
     };
     const handleVisibleChange = (flag) => {
@@ -96,44 +85,32 @@ const Tables = () => {
             )),
         },
         {
-            title: 'Trạng thái YCBG',
+            title: 'Trạng thái',
             dataIndex: 'address',
         },
         {
-            title: 'Ngày mong muốn báo giá',
+            title: 'Mẫ hàng hóa',
+            dataIndex: 'address',
+        },
+        {
+            title: 'Tên hàng hóa',
+            dataIndex: 'address',
+        },
+        {
+            title: 'Tên công ty',
+            dataIndex: 'address',
+        },
+        {
+            title: 'Ngày tạo đơn hàng',
             dataIndex: 'dateReponse',
             render: (dateReponse) =>
                 <span>{(moment(new Date(dateReponse)).format("DD/MM/YYYY"))}</span>
         },
         {
-            title: 'Ngày báo giá',
+            title: 'Ngày cập nhật đơn hàng',
             dataIndex: 'modifiedDate',
             render: (modifiedDate) =>
                 <span>{(moment(new Date(modifiedDate)).format("DD/MM/YYYY"))}</span>
-        },
-        {
-            title: 'Mã YCBG',
-            dataIndex: 'requestCode',
-        },
-        {
-            title: 'Nhóm hàng hóa',
-            dataIndex: 'address',
-        },
-        {
-            title: 'Tên hàng hóa',
-            dataIndex: 'productNames',
-        },
-        {
-            title: 'Tên công ty',
-            dataIndex: 'companyName',
-        },
-        {
-            title: 'Người nhận',
-            dataIndex: 'receiver',
-        },
-        {
-            title: 'Số điện thoại',
-            dataIndex: 'phoneNumber',
         },
     ];
     // const data = [
@@ -202,7 +179,7 @@ const Tables = () => {
             <CCol xs={12}>
                 <CCard className="mb-4">
                     <CCardBody>
-                        <p className="text-medium-emphasis" style={{ fontSize: '20px', color: '#262626 !important', fontWeight: 500 }}>
+                        <p className="text-medium-emphasis titleCart" style={{ fontSize: '20px', color: '#262626 !important', fontWeight: 500 }} >
                             Tìm kiếm
                         </p>
                         <Form
@@ -211,53 +188,53 @@ const Tables = () => {
                             className="ant-advanced-search-form"
                             labelAlign="left"
                             onFinish={onClickSearch}
-                            labelCol={{ span: 6 }} wrapperCol={{ span: 12 }}
+                            labelCol={{ span: 5 }} wrapperCol={{ span: 12 }}
                         >
                             <Row gutter={24}>
                                 <Col span={12} >
-                                    <Form.Item name="requestCode" label="Mẫ YCBG" >
-                                        <Input placeholder="Nhập mã YCBG" />
+                                    <Form.Item name="requestCode" label="Mã đơn hàng:" >
+                                        <Input placeholder="Nhập Mã YCBG" />
                                     </Form.Item>
                                 </Col>
                                 <Col span={12} >
-                                    <Form.Item name="productGroupId" label="Nhóm hàng hóa" >
-                                        <Select placeholder="Chọn nhóm hàng hóa">
-                                            <Option value="Zhejiang">Zhejiang</Option>
-                                            <Option value="Jiangsu">Jiangsu</Option>
-                                        </Select>
+                                    <Form.Item name="productGroupId" label="Mã hàng hóa:" >
+                                        <Input placeholder="Nhập mã hàng hóa" />
                                     </Form.Item>
                                 </Col>
                                 <Col span={12} >
-                                    <Form.Item name="productName" label="Tên hàng hóa" >
+                                    <Form.Item name="productName" label="Tên hàng hóa:" >
                                         <Input placeholder="Nhập tên hàng hóa" />
                                     </Form.Item>
                                 </Col>
                                 <Col span={12} >
-                                    <Form.Item name="companyName" label="Tên công ty" >
+                                    <Form.Item name="companyName" label="Trạng thái:" >
+                                        <Select placeholder="Tất cả">
+                                            <Option value="Zhejiang">Zhejiang</Option>
+                                            <Option value="Jiangsu">Jiangsu</Option>
+                                        </Select>
+
+                                    </Form.Item>
+                                </Col>
+                                <Col span={12} >
+                                    <Form.Item name="productName" label="Tên công ty:" >
                                         <Input placeholder="Nhập tên công ty" />
                                     </Form.Item>
                                 </Col>
 
                                 <Col span={12} >
-                                    <Form.Item name="dateReponse" label="Ngày mong muốn báo giá" className={'two-rows-label'}>
+                                    <Form.Item name="dateReponse" label="Ngày tạo đơn hàng:" className={'two-rows-label'}>
                                         <RangePicker locale={locale} format="DD/MM/YYYY" />
                                     </Form.Item>
                                 </Col>
 
                                 <Col span={12} >
-                                    <Form.Item label="Người nhận/SĐT" >
-                                        <Form.Item
-                                            name="year"
-                                            style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}
-                                        >
-                                            <Input placeholder="Nhập nguời nhận" />
-                                        </Form.Item>
-                                        <Form.Item
-                                            name="month"
-                                            style={{ display: 'inline-block', width: 'calc(50% - 8px)', marginLeft: '16px' }}
-                                        >
-                                            <Input placeholder="Nhập số diện thoại" />
-                                        </Form.Item>
+                                    <Form.Item label="" >
+
+                                    </Form.Item>
+                                </Col>
+                                <Col span={12} >
+                                    <Form.Item name="dateReponse" label="Ngày cập nhật đơn hàng: " className={'two-rows-label'}>
+                                        <RangePicker locale={locale} format="DD/MM/YYYY" />
                                     </Form.Item>
                                 </Col>
 
@@ -296,12 +273,12 @@ const Tables = () => {
                     <CCardBody>
                         <CRow gutter={24}>
                             <Col span={12} style={{ textAlign: 'left', }}>
-                                <p style={{ fontSize: '20px', color: '#262626 !important', fontWeight: 500 }}>Danh sách yêu cầu báo giá</p>
+                                <p style={{ fontSize: '20px', color: '#262626 !important', fontWeight: 500 }}>Danh sách Đơn hàng mua</p>
                                 <p>500 YCBG</p>
                             </Col>
                             <Col span={12} style={{ textAlign: 'right', }}>
                                 <Button style={{ margin: '0 8px', }} className='btn-creatd' onClick={() => { handleMenuClick() }} >
-                                    Tạo YCBG
+                                    Tạo Đơn hàng
                                 </Button>
 
                                 <Button className='btn-excel' htmlType="submit">
@@ -326,4 +303,4 @@ const Tables = () => {
     )
 }
 
-export default Tables
+export default OrderList

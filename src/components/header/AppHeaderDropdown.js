@@ -21,7 +21,7 @@ import {
   cilUser,
 } from '@coreui/icons'
 import CIcon from '@coreui/icons-react'
-
+import { ReactComponent as Drop } from './../../assets/svg/dropdown.svg';
 import avatar8 from './../../assets/images/avatars/8.jpg'
 
 const AppHeaderDropdown = () => {
@@ -29,6 +29,8 @@ const AppHeaderDropdown = () => {
     <CDropdown variant="nav-item">
       <CDropdownToggle placement="bottom-end" className="py-0" caret={false}>
         <CAvatar src={avatar8} size="md" />
+        <span style={{ fontSize: '16px', padding: '0 15px' }}>Phan Thanh Dũng</span>
+        <Drop />
       </CDropdownToggle>
       <CDropdownMenu className="pt-0" placement="bottom-end">
         <CDropdownHeader className="bg-light fw-semibold py-2">Account</CDropdownHeader>
