@@ -11,6 +11,10 @@ const QuotationlistView = React.lazy(() => import('./views/quotation-list/quotai
 //order
 const OrderList = React.lazy(() => import('./views/order/OrderList'))
 const OrderCreate = React.lazy(() => import('./views/order/OrderCreate'))
+
+//phe duyet ycbg
+const ApproveList = React.lazy(() => import('./views/ApproveYCBG/ApproveYCBG'))
+const ApproveView = React.lazy(() => import('./views/ApproveYCBG/ApproveYCBG.view'))
 // Base
 const Accordion = React.lazy(() => import('./views/base/accordion/Accordion'))
 const Breadcrumbs = React.lazy(() => import('./views/base/breadcrumbs/Breadcrumbs'))
@@ -66,7 +70,11 @@ const routes = [
     { path: '/list-quotation/:id/view', name: 'Chi tiết Yêu cầu báo giá', element: QuotationlistView },
     //order
     { path: '/order-list', name: 'Danh sách đơn hàng mua', element: OrderList },
-    { path: '/order-create', name: 'Tạo mới đơn hàng mua', element: OrderCreate },
+    { path: '/order-list/create', name: 'Tạo mới đơn hàng mua', element: OrderCreate },
+
+    //phe duyet ycbg
+    { path: '/approve-list', name: 'Phê duyệt yêu cầu báo giá', element: ApproveList },
+    { path: '/approve-list/:id/view', name: 'Xen chi tiết YCBG', element: ApproveView },
     //end
     { path: '/dashboard', name: 'Dashboard', element: Dashboard },
     { path: '/theme', name: 'Theme', element: Colors, exact: true },

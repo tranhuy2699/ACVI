@@ -7,6 +7,16 @@ const uploadFile = 'https://avsm.avic.vn/avic-business/uploadFile'
 
 // create ycbg
 const CreatedYCBG = 'https://avsm.avic.vn/avic-business/requestQuote'
+
+const detailYCBG = 'https://avsm.avic.vn/avic-business/requestQuote'
 const ENDPOINT_REPOS = '/repos'
 
-export { searchYCBG, getAllGroupProduct, getAllProvince, uploadFile, CreatedYCBG, ENDPOINT_REPOS }
+export {
+    searchYCBG,
+    getAllGroupProduct,
+    getAllProvince,
+    uploadFile,
+    CreatedYCBG,
+    detailYCBG,
+    ENDPOINT_REPOS,
+}

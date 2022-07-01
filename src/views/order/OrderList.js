@@ -277,11 +277,11 @@ const OrderList = () => {
                                 <p>500 YCBG</p>
                             </Col>
                             <Col span={12} style={{ textAlign: 'right', }}>
-                                <Button style={{ margin: '0 8px', }} className='btn-creatd' onClick={() => { handleMenuClick() }} >
-                                    Tạo Đơn hàng
+                                <Button style={{ margin: '0 8px', background: '#FA8C16', color: '#FFFFFF' }} className='btn-creatd' onClick={() => { handleMenuClick() }} >
+                                    Tạo YCBG
                                 </Button>
 
-                                <Button className='btn-excel' htmlType="submit">
+                                <Button className='btn-excel' style={{ background: '#B1B0B8', color: '#FFFFFF' }} >
                                     Xuất excel
                                 </Button>
                             </Col>

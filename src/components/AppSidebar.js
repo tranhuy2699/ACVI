@@ -36,7 +36,7 @@ const items = [
   getItem('Theo dõi tình hình quản lý mua hàng', 'list-quotation1', <AppleOutlined />),
   getItem('Quản lý Yêu cầu báo giá', 'sub1', <AppstoreOutlined />, [
     getItem('Danh sách yêu cầu báo giá', 'list-quotation'),
-    getItem('Phê duyệt yêu cầu báo giá', 'list-quotation3'),
+    getItem('Phê duyệt yêu cầu báo giá', 'approve-list'),
   ]),
   getItem('Quản lý báo giá sản phẩm', 'sub2', <AppleOutlined />, [
     getItem('Tiếp nhận & duyệt báo giá', 'list-quotation4'),

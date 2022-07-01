@@ -24,7 +24,7 @@ import {
     Popconfirm
 } from 'antd'
 import axios from "axios";
-import ApproveModal from './approveModal'
+// import ApproveModal from './approveModal'
 import { SettingOutlined, UserOutlined } from '@ant-design/icons'
 import * as constants from "../../services/ApiYCBG.js";
 import { DocsCallout, DocsExample } from 'src/components'
@@ -161,7 +161,7 @@ const ViewYCBG = () => {
             <CCol xs={12}>
                 <CCard className="mb-4">
                     <CCardBody>
-                        <p className="text-medium-emphasis">Thông tin chung</p>
+                        <p className="titleCart">Thông tin chung</p>
                         <Form
                             form={form}
                             name="advanced_search"
@@ -203,7 +203,7 @@ const ViewYCBG = () => {
             <CCol xs={12}>
                 <CCard className="mb-4">
                     <CCardBody>
-                        <p className="text-medium-emphasis">Thông tin công ty YCBG</p>
+                        <p className="titleCart">Thông tin công ty YCBG</p>
                         <Form
                             form={form}
                             name="advanced_search"
@@ -262,7 +262,7 @@ const ViewYCBG = () => {
                     <CCardBody>
                         <CRow gutter={24}>
                             <Col span={12} style={{ textAlign: 'left' }}>
-                                <p>Thông tin hàng hóa</p>
+                                <p className='titleCart'>Thông tin hàng hóa</p>
                                 <p>500 YCBG</p>
                             </Col>
                             <Col span={12} style={{ textAlign: 'right' }}>
@@ -288,16 +288,14 @@ const ViewYCBG = () => {
                     Quay lại
                 </Button>
                 <Button style={{ margin: '0 4px', background: '#CF1322', color: '#FFFFFF' }} onClick={() => { handleMenuClick('delete') }} >
-                    Xóa
+                    Cancel
                 </Button>
-                <Button style={{ margin: '0 4px', background: '#096DD9', color: '#FFFFFF' }} onClick={() => { handleMenuClick('update') }} >
-                    Chỉnh sửa
-                </Button>
+
                 <Button style={{ margin: '0 4px', background: '#FA8C16', color: '#FFFFFF' }} className='btn-creatd' onClick={() => { handleApprove() }} >
-                    Gửi phê duyệt
+                    Phê duyệt và gửi sang PM
                 </Button>
             </CCol>
-            {notSignVisible ?
+            {/* {notSignVisible ?
                 <ApproveModal
                     openPopup={notSignVisible}
                     toggleModal={toggleNotSign}
@@ -313,7 +311,7 @@ const ViewYCBG = () => {
                     notSignId={notSignId}
                     modalAction={() => triggerSearch()}
                 /> : <></>
-            }
+            } */}
 
 
 

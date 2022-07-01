@@ -1,7 +1,9 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import { BrowserRouter as Router, Route, Link, useNavigate } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Link, useNavigate, useParams } from 'react-router-dom'
 import axios from "axios";
 import moment from 'moment'
+import { ReactComponent as Flus } from '../../assets/svg/plus.svg';
+import { ReactComponent as Delete } from '../../assets/svg/delete.svg';
 import {
     CCard,
     CCardBody,
@@ -24,7 +26,7 @@ import {
     Space,
     Popconfirm,
     Upload,
-    message
+    notification
 } from 'antd'
 import { SettingOutlined, UserOutlined } from '@ant-design/icons'
 import * as constants from "../../services/ApiYCBG.js";
@@ -41,6 +43,7 @@ const EditableRow = ({ index, ...props }) => {
         </Form>
     );
 };
+
 const EditableCell = ({
     title,
     editable,
@@ -62,7 +65,7 @@ const EditableCell = ({
     const toggleEdit = () => {
         setEditing(!editing);
         form.setFieldsValue({
-            [dataIndex]: record[dataIndex],
+            [dataIndex]: record[dataIndex]
         });
     };
 
@@ -72,7 +75,7 @@ const EditableCell = ({
             toggleEdit();
             handleSave({ ...record, ...values });
         } catch (errInfo) {
-            console.log('Save failed:', errInfo);
+            console.log("Save failed:", errInfo);
         }
     };
 
@@ -82,23 +85,23 @@ const EditableCell = ({
         childNode = editing ? (
             <Form.Item
                 style={{
-                    margin: 0,
+                    margin: 0
                 }}
                 name={dataIndex}
                 rules={[
                     {
                         required: true,
-                        message: `${title} is required.`,
-                    },
+                        message: `${title} is required.`
+                    }
                 ]}
             >
-                <Input ref={inputRef} onPressEnter={save} onBlur={save} className="test" />
+                <Input ref={inputRef} onPressEnter={save} onBlur={save} />
             </Form.Item>
         ) : (
             <div
                 className="editable-cell-value-wrap"
                 style={{
-                    paddingRight: 24,
+                    paddingRight: 24
                 }}
                 onClick={toggleEdit}
             >
@@ -122,9 +125,86 @@ const CreateYCBG = () => {
     const [progress, setProgress] = useState(0);
     const [isRowIndex, setisRowIndex] = useState(0);
     const [page, setPage] = useState(1);
+    const [count, setCount] = useState(0);
+    const [dataSource, setDataSource] = useState([]);
+    const [type, settype] = useState('created');
+    const { id } = useParams();
+    const [detail, setdetail] = useState({});
+    const { RangePicker } = DatePicker
+    const defaultColumns = [
+        {
+            title: 'STT',
+            dataIndex: 'key',
+            render: (value, item, index) => (
+                <span>{(page - 1) * 10 + index + 1}</span>
+            ),
+            width: '30',
+        },
+        {
+            title: 'Xử lý',
+            dataIndex: 'productNameClient',
+            width: '30',
+            render: (_, record) =>
+                dataSource.length >= 1 ? (
+                    <Button style={{ padding: '0', border: 'none' }} onClick={() => handleDelete(record.key)}>
+                        <Delete />
+                    </Button>
+                ) : null,
+        },
+        {
+            title: 'Tên hàng hóa *',
+            dataIndex: 'productNameClient',
+            width: '200',
+            editable: true,
+        },
+        {
+            title: 'Số Lượng *',
+            dataIndex: 'amount',
+            editable: true,
+        },
+        {
+            title: 'Đơn vị hàng hóa *',
+            dataIndex: 'unit',
+            editable: true,
+        },
+        {
+            title: 'Mô tả(từ KH) *',
+            dataIndex: 'describes',
+            editable: true,
+        },
+        {
+            title: 'Hình ảnh(từ KH) *',
+            dataIndex: 'attachs',
+            render: (_, record) =>
+                <Upload name="file" customRequest={uploadImage} onChange={handleOnChange}>
+                    <Button type='primary' onClick={() => setIndexCurrer(record.key)}>Tải ảnh</Button>
+                </Upload>
+        },
+    ];
+    const handleAdd = () => {
+        const newData = {
+            key: count,
+            productNameClient: '-',
+            amount: '-',
+            unit: '-',
+            describes: '-',
+        };
+        setDataSource([...dataSource, newData]);
+        setCount(count + 1);
+    };
+
+
     useEffect(() => {
         getAllProvince();
+        notification.config({ top: 70 });
+        if (window.location.href.toString().includes('edit')) {
+            console.log('edit');
+            settype('edit');
+            getDetailYCBG();
+
+        }
     }, [isRowIndex]);
+
     const getAllProvince = () => {
         axios.get(constants.getAllProvince)
             .then(result => {
@@ -157,22 +237,40 @@ const CreateYCBG = () => {
                 console.log('loi api')
             );
     }
+    const openNotificationWithIcon = (type, message) => {
+        notification[type]({
+            message: message,
+        });
+    };
     const handleCreated = (form) => {
         form.productQuotes = [];
-        form.productQuotes = dataSource.map(item => {
-            if (!item.attachs) item.attachs = ['1.jpg']
-            return item
-        });
+        form.productQuotes = dataSource;
         form.dateReponse = moment(form.dateReponse).format('YYYY-MM-DD')
         console.log(form)
-        axios.post(constants.CreatedYCBG, form)
-            .then(result => {
-                message.success('Thêm mới thành công', 10);
-                navigate('/list-quotation');
-            })
-            .catch(error =>
-                console.log('loi api')
-            );
+        if (type == 'edit') {
+
+            axios.put(constants.CreatedYCBG + `/${id}`, form)
+                .then(result => {
+                    openNotificationWithIcon('success', 'Cập nhật thành công');
+                    navigate('/list-quotation');
+                })
+                .catch(error => {
+                    openNotificationWithIcon('error', error.response.data.message);
+                }
+                );
+        }
+        else {
+            axios.post(constants.CreatedYCBG, form)
+                .then(result => {
+                    openNotificationWithIcon('success', 'Thêm mới thành công');
+                    navigate('/list-quotation');
+                })
+                .catch(error => {
+                    openNotificationWithIcon('error', error.response.data.message);
+                }
+                );
+        }
+
     }
     const handleMenuClick = (e) => {
         console.log('click icon', e)
@@ -200,72 +298,14 @@ const CreateYCBG = () => {
         const newData = dataSource.filter((item) => item.key !== key);
         setDataSource(newData);
     };
-    const [dataSource, setDataSource] = useState([
-        {
-            key: '0',
-            productNameClient: 'Edward King 0',
-            amount: '32',
-            unit: 'cái',
-            describes: 'London, Park Lane no. 0',
-        },
-        {
-            key: '1',
-            productNameClient: 'Edward King 0',
-            amount: '32',
-            unit: 'cái',
-            describes: 'London, Park Lane no. 0',
-        },
-        {
-            key: '2',
-            productNameClient: 'Vải Polyester kẻ caro F29',
-            amount: '32',
-            unit: 'cái',
-            describes: 'Vải chống tĩnh điện là một loại vải đặc biệt giúp hạn chế tối đa sự truyền điện tích tĩnh từ cơ thể người sang môi trường tiếp xúc xung quanh, từ đó giúp hạn chế cháy nổ, bảo vệ sản phẩm....',
-        },
-    ]);
-    const defaultColumns = [
-        {
-            title: 'STT',
-            dataIndex: 'key',
-            render: (value, item, index) => (
-                <span>{(page - 1) * 10 + index + 1}</span>
-            )
-        },
-        {
-            title: 'Tên hàng hóa',
-            dataIndex: 'productNameClient',
-            width: '200',
-            editable: true,
-        },
-        {
-            title: 'Số Lượng',
-            dataIndex: 'amount',
-            editable: true,
-        },
-        {
-            title: 'Đơn vị hàng hóa',
-            dataIndex: 'unit',
-            editable: true,
-        },
-        {
-            title: 'Mô tả(từ KH)',
-            dataIndex: 'describes',
-            editable: true,
-        },
-        {
-            title: 'Hình ảnh(từ KH)',
-            dataIndex: 'attachs',
-            render: (value, item, index) =>
-                <Upload name="file" customRequest={uploadImage} onChange={handleOnChange}>
-                    <Button type='primary' onClick={setIndexRow(index)}>Tải ảnh</Button>
-                </Upload>
-        },
-    ];
-    const setIndexRow = (index) => {
-        let rowIndex = index
-        setisRowIndex(rowIndex);
-        console.log(isRowIndex)
-    }
+
+    const setIndexCurrer = (key) => {
+        const newData = [...dataSource];
+        const index = newData.findIndex((item) => key === item.key);
+        console.log(index);
+        setisRowIndex(index);
+        console.log("isRowIndex", isRowIndex);
+    };
     const uploadImage = async options => {
         const { onSuccess, onError, file, onProgress } = options;
         const fmData = new FormData();
@@ -318,7 +358,43 @@ const CreateYCBG = () => {
             }),
         };
     });
-    const { RangePicker } = DatePicker
+    //edit
+    const getDetailYCBG = () => {
+        axios.get(constants.detailYCBG + `/${id}`)
+            .then(result => {
+                console.log(result.data.data);
+                let object = result.data.data
+                setValueToForm(object)
+            })
+            .catch(error =>
+                console.log('loi api')
+            );
+    }
+    const setValueToForm = (value) => {
+        getDistrictByProv(value.provinceId)
+        form.setFieldsValue({
+            requestCode: value.requestCode,
+            dateReponse: moment(value.dateReponse),
+            companyName: value.companyName,
+            recipients: value.recipients,
+
+            provinceId: value.provinceId,
+            districtId: value.districtId,
+            receiver: value.receiver,
+            address: value.address,
+            phoneNumber: value.phoneNumber,
+            email: value.email
+        })
+        let array = value.productQuotes.map(item => {
+            item.attachs = [];
+            if (item.attachIdClients) {
+                item.attachIdClients.split(',').forEach(item2 => {
+                    item.attachs.push(item2)
+                })
+            }
+        })
+        setDataSource(array)
+    }
     return (
         <CRow>
             <p style={{ color: '#096DD9', fontSize: '18px', fontWeight: 600 }}>Tạo yêu cầu báo giá</p>
@@ -338,7 +414,7 @@ const CreateYCBG = () => {
                 <CCol xs={12}>
                     <CCard className="mb-4">
                         <CCardBody>
-                            <p className="text-medium-emphasis">Thông tin chung</p>
+                            <p className="" style={{ fontSize: '16px', color: '#262626 !important', fontWeight: 500 }}>Thông tin chung</p>
 
                             <Row gutter={24}>
                                 <Col span={12}>
@@ -348,7 +424,7 @@ const CreateYCBG = () => {
                                 </Col>
                                 <Col span={12}>
                                     <Form.Item name="dateReponse" label="Ngày mong muốn báo giá" className={'two-rows-label'}>
-                                        <DatePicker />
+                                        <DatePicker showTime format="DD/MM/YYYY HH:mm:ss" placeholder="Nhập ngày mong muốn báo giá" />
                                     </Form.Item>
                                 </Col>
                             </Row>
@@ -359,7 +435,7 @@ const CreateYCBG = () => {
                 <CCol xs={12}>
                     <CCard className="mb-4">
                         <CCardBody>
-                            <p className="text-medium-emphasis">Thông tin coong ty YCBG</p>
+                            <p className="" style={{ fontSize: '16px', color: '#262626 !important', fontWeight: 500 }}>Thông tin công ty YCBG</p>
                             <Row gutter={24}>
                                 <Col span={12}>
                                     <Form.Item name="companyName" label="Tên công ty: ">
@@ -428,7 +504,7 @@ const CreateYCBG = () => {
                         <CCardBody>
                             <CRow gutter={24}>
                                 <Col span={12} style={{ textAlign: 'left' }}>
-                                    <p>Thông tin hàng hóa</p>
+                                    <p style={{ fontSize: '16px', color: '#262626 !important', fontWeight: 500 }}>Thông tin hàng hóa</p>
                                     <p>500 YCBG</p>
                                 </Col>
                                 <Col span={12} style={{ textAlign: 'right' }}>
@@ -446,7 +522,9 @@ const CreateYCBG = () => {
                                     dataSource={dataSource}
                                     columns={columns}
                                 />
+
                             </CRow>
+                            <Button style={{ padding: '0', marginTop: '10px' }} onClick={handleAdd}><Flus /></Button>
                         </CCardBody>
                     </CCard>
                 </CCol>

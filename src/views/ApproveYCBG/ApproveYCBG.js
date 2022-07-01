@@ -22,10 +22,10 @@ import {
 } from '@coreui/react'
 import { useState } from 'react';
 import locale from 'antd/es/date-picker/locale/vi_VN';
-import { Button, Col, Form, Input, Row, Select, DatePicker, Table, Dropdown, Menu, Space } from 'antd';
+import { Button, Col, Form, Input, Row, Select, DatePicker, Table, Dropdown, Menu, Tabs } from 'antd';
 import { SettingOutlined, UserOutlined, EyeOutlined, EditOutlined, DeleteFilled } from '@ant-design/icons';
-
 import { DocsCallout, DocsExample } from 'src/components'
+const { TabPane } = Tabs;
 const Tables = () => {
     const navigate = useNavigate()
     const [form] = Form.useForm();
@@ -225,29 +225,12 @@ const Tables = () => {
         return (
             <Menu>
                 <Menu.Item key="detail">
-                    <Link to={`/list-quotation/${record.requestId}/view`}>
+                    <Link to={`/approve-list/${record.requestId}/view`}>
                         <div style={{ display: 'flex', alignItems: 'center' }}>
                             <Eye style={{ width: 24, height: 24, marginRight: 10 }} />Xem chi tiết
                         </div>
                     </Link>
                 </Menu.Item>
-
-                <Menu.Item key="edit">
-                    <Link to={`/list-quotation/${record.requestId}/edit`}>
-                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                            <Edit style={{ width: 24, height: 24, marginRight: 10 }} />Chỉnh sửa
-                        </div>
-                    </Link>
-                </Menu.Item>
-
-                <Menu.Item key="delete">
-                    <Link to={`/list-quotation/${record.requestId}/`}>
-                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                            <Delete style={{ width: 24, height: 24, marginRight: 10 }} />Xóa
-                        </div>
-                    </Link>
-                </Menu.Item>
-
             </Menu >
         )
     }
@@ -360,24 +343,50 @@ const Tables = () => {
                 <CCard>
                     <CCardBody>
                         <CRow gutter={24}>
-                            <Col span={12} style={{ textAlign: 'left', }}>
-                                <p style={{ fontSize: '20px', color: '#262626 !important', fontWeight: 500 }}>Danh sách yêu cầu báo giá</p>
-                                <p>500 YCBG</p>
-                            </Col>
-                            <Col span={12} style={{ textAlign: 'right', }}>
-                                <Button style={{ margin: '0 8px', background: '#FA8C16', color: '#FFFFFF' }} className='btn-creatd' onClick={() => { handleMenuClick() }} >
-                                    Tạo YCBG
-                                </Button>
+                            <Tabs defaultActiveKey="1" type="card" size="middle">
+                                <TabPane tab="Chờ phê duyệt (10)" key="1">
+                                    <CCard style={{ border: 'none' }}>
+                                        <CCardBody >
+                                            <CRow gutter={24}>
+                                                <Col span={12} style={{ textAlign: 'left', }}>
+                                                    <p style={{ fontSize: '20px', color: '#262626 !important', fontWeight: 500 }}>Danh sách yêu cầu báo giá chờ phê duyệt</p>
+                                                    <p>500 YCBG</p>
+                                                </Col>
+                                                <Col span={12} style={{ textAlign: 'right', }}>
+                                                    <Button className='btn-excel' style={{ background: '#B1B0B8', color: '#FFFFFF' }} >
+                                                        Xuất excel
+                                                    </Button>
+                                                </Col>
+                                            </CRow>
+                                            <CRow gutter={24}>
+                                                <Table columns={columns} dataSource={data} size="middle"></Table>
+                                            </CRow>
+                                        </CCardBody>
+                                    </CCard>
 
-                                <Button className='btn-excel' style={{ background: '#B1B0B8', color: '#FFFFFF' }} >
-                                    Xuất excel
-                                </Button>
-                            </Col>
-                        </CRow>
+                                </TabPane>
+                                <TabPane tab="Chờ báo giá (05)" key="2">
+                                    <CCard style={{ border: 'none' }}>
+                                        <CCardBody >
+                                            <CRow gutter={24}>
+                                                <Col span={12} style={{ textAlign: 'left', }}>
+                                                    <p style={{ fontSize: '20px', color: '#262626 !important', fontWeight: 500 }}>Danh sách yêu cầu báo giá chờ báo giá</p>
+                                                    <p>500 YCBG</p>
+                                                </Col>
+                                                <Col span={12} style={{ textAlign: 'right', }}>
+                                                    <Button className='btn-excel' style={{ background: '#B1B0B8', color: '#FFFFFF' }} >
+                                                        Xuất excel
+                                                    </Button>
+                                                </Col>
+                                            </CRow>
+                                            <CRow gutter={24}>
+                                                <Table columns={columns} dataSource={data} size="middle"></Table>
+                                            </CRow>
+                                        </CCardBody>
+                                    </CCard>
+                                </TabPane>
+                            </Tabs>
 
-                        <CRow gutter={24}>
-                            <Table columns={columns} dataSource={data} size="middle"
-                            />
                         </CRow>
 
 

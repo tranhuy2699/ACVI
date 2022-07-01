@@ -348,7 +348,7 @@ const OrderCreate = () => {
                 <CCol xs={12}>
                     <CCard className="mb-4">
                         <CCardBody>
-                            <p className="text-medium-emphasis">Thông tin coong ty YCBG</p>
+                            <p className="titleCart">Thông tin coong ty YCBG</p>
                             <Row gutter={24}>
                                 <Col span={12}>
                                     <Form.Item name="companyName" label="Tên công ty: ">
@@ -417,7 +417,7 @@ const OrderCreate = () => {
                         <CCardBody>
                             <CRow gutter={24}>
                                 <Col span={12} style={{ textAlign: 'left' }}>
-                                    <p>Thông tin hàng hóa</p>
+                                    <p className='titleCart'>Thông tin hàng hóa</p>
                                     <p>500 YCBG</p>
                                 </Col>
                                 <Col span={12} style={{ textAlign: 'right' }}>

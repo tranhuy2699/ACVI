@@ -40,7 +40,7 @@ const AppHeader = () => {
         </CHeaderBrand>
         <CHeaderNav className="ms-3">
           <CNavLink href="#">
-            <a href='#'>Hướng dẫn sử dụng</a>
+            <span style={{ color: '#40A9FF', fontWeight: 700 }}>Hướng dẫn sử dụng</span>
           </CNavLink>
           <AppHeaderDropdown />
         </CHeaderNav>
